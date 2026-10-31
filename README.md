@@ -20,6 +20,9 @@ AI로 구체화하기 위한 아이디어 모음. 각 아이디어는 `카테고
 - [개인정보 처리방침-실제 수집 정합성 점검](compliance/privacy-policy-consistency-checker/README.md) — 처리방침과 실제 폼·쿠키·외부 스크립트를 비교해 고지 누락 탐지
 - [보안성 검토 1차 리뷰어](compliance/security-review-assistant/README.md) — 도입·변경 요청 문서를 체크리스트로 1차 검토하고 질문 목록 생성
 
+### [game](game/)
+- [격자 턴제 삼국지 공성전](game/three-kingdoms-grid-tactics/README.md) — 기동력이 다른 장수로 격자 맵을 전진하며 제한 턴 안에 적 요새를 함락하는 전략 게임
+
 ### [security-awareness](security-awareness/)
 - [부서 맞춤형 모의 훈련 시나리오 생성](security-awareness/phishing-simulation-generator/README.md) — 부서 업무 맥락에 맞는 모의 피싱 시나리오와 교육 자료 생성
 - [사내 보안 정책 Q&A 봇](security-awareness/security-policy-qa-bot/README.md) — 정책 조항을 인용해 반복 질문에 답하고 미해결 질문은 티켓으로
