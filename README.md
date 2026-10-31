@@ -31,7 +31,7 @@ AI로 구체화하기 위한 아이디어 모음. 각 아이디어는 `카테고
 - [조선 그리드 RPG (가칭)](game/joseon-grid/README.md) — 조선 500년 테마: 건국부터 개항까지 장마다 시대가 바뀌고, 이성계·이순신 등 조선의 인물과 함께 싸운다
 - [원탁 그리드 RPG (가칭)](game/medieval-europe-grid/README.md) — 중세 유럽 테마: 아서왕 전설의 원탁 기사들과 성을 공략하고 기사 결투를 치른다
 - [북유럽 신화 그리드 RPG (가칭)](game/norse-myth-grid/README.md) — 북유럽 신화 테마: 토르·발키리·오딘과 아홉 세계를 오가며 신들의 황혼에 맞선다
-- [스타 그리드 RPG (가칭)](game/space-war-grid/README.md) — SF 우주전쟁 테마: 독립 함대를 이끌고 제국과 싸우며, 함대전은 턴제, 에이스 대결은 1:1 액션
+- [SF 그리드 RPG (가칭)](game/space-war-grid/README.md) — SF 우주전쟁 테마: 독립 함대를 이끌고 제국과 싸우며, 함대전은 턴제, 에이스 대결은 1:1 액션
 - [삼국지 그리드 RPG](game/three-kingdoms-grid-tactics/README.md) — 삼국지 테마: 유비·관우·장비와 필드를 모험하고 연의의 핵심 전투는 턴제, 일기토는 1:1 액션 (오리지널·미녀 재해석 디자인 선택)
 - [와일드 웨스트 그리드 RPG (가칭)](game/wild-west-grid/README.md) — 서부시대 테마: 보안관과 총잡이들이 무법자 소굴을 소탕하고 정오의 결투를 벌인다
 - [무협 그리드 RPG (가칭)](game/wuxia-grid/README.md) — 무협 테마: 멸문 문파의 제자가 강호를 누비며 경공으로 탐험하고 비무를 치른다 (창작 문파·무공)
