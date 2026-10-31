@@ -67,6 +67,8 @@
   "turnLimit": 18,
   "map": ["PPPFFPPP", "PPMMFPRP", "..."],
   "victory": { "type": "fortress", "x": 4, "y": 0, "garrison": 3000 },
+  "camp": { "x": 4, "y": 9 },
+  "supplyBases": [{ "x": 1, "y": 5 }, { "x": 6, "y": 4 }],
   "boss": { "characterId": "boss_01", "rewardCharacter": true },
   "reward": { "firstClearCurrency": 20, "replayCurrency": 10 },
   "next": ["2-4"],
