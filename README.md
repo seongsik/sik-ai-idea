@@ -28,6 +28,7 @@ AI로 구체화하기 위한 아이디어 모음. 각 아이디어는 `카테고
 - [나일 그리드 RPG (가칭)](game/egypt-myth-grid/README.md) — 이집트 신화 테마: 호루스·아누비스·바스테트가 세트와 혼돈의 뱀에 맞서 질서를 되찾는다
 - [판타지 그리드 RPG (가칭)](game/fantasy-grid/README.md) — 판타지 세계 테마: 인간·엘프·드워프 모험가가 마왕군에 맞서 봉인석을 되찾는다
 - [조선 그리드 RPG (가칭)](game/joseon-grid/README.md) — 조선 500년 테마: 건국부터 개항까지 장마다 시대가 바뀌고, 이성계·이순신 등 조선의 인물과 함께 싸운다
+- [러브크래프트 그리드 RPG (가칭)](game/lovecraft-grid/README.md) — 코스믹 호러 테마: 1920년대 조사원들이 사교 집단을 막고 깨어나는 고대 존재를 다시 봉인한다
 - [원탁 그리드 RPG (가칭)](game/medieval-europe-grid/README.md) — 중세 유럽 테마: 아서왕 전설의 원탁 기사들과 성을 공략하고 기사 결투를 치른다
 - [라그나로크 그리드 RPG (가칭)](game/norse-myth-grid/README.md) — 북유럽 신화 테마: 토르·발키리·오딘과 아홉 세계를 오가며 라그나로크를 막는다
 - [스타 그리드 RPG (가칭)](game/space-war-grid/README.md) — SF 우주전쟁 테마: 독립 함대를 이끌고 제국과 싸우며, 함대전은 턴제, 에이스 대결은 1:1 액션
