@@ -24,7 +24,7 @@ AI로 구체화하기 위한 아이디어 모음. 각 아이디어는 `카테고
 - **[공통 지침]** [게임 개발·출시 공통 지침](game/dev-release-guideline/README.md) — 엔진(Unity)과 코드 구조, 서버, 다국어(1차 4개 언어), 개발 도구와 AI 사용, 아트 파이프라인, 출시 체크리스트, 개발 단계
 - **[공통 지침]** [게임 개발 공통 과금 지침](game/monetization-guideline/README.md) — 단일 재화, 상위 상품 효율 상승, 등급 없는 뽑기, 광고와 광고 제거 상품, 환불 규정, 스팀판 과금, 무과금 클리어 보장
 - **[공통 지침]** [스테이지 기반 전략 게임 기본 골격](game/stage-strategy-framework/README.md) — 게임 규칙: 가로 탑뷰 RPG(필드 모험·액션 + 턴제 핵심 전투 + 1:1 대결), 캐릭터·장비·성장, 화면과 대화 UI, 플랫폼 확장 대비
-- [삼국지 어드벤처 전략 RPG](game/three-kingdoms-grid-tactics/README.md) — 삼국지 테마: 유비·관우·장비와 필드를 모험하고 연의의 핵심 전투는 턴제, 일기토는 1:1 액션 (오리지널·미녀 재해석 디자인 선택)
+- [삼국지 그리드](game/three-kingdoms-grid-tactics/README.md) — 삼국지 테마: 유비·관우·장비와 필드를 모험하고 연의의 핵심 전투는 턴제, 일기토는 1:1 액션 (오리지널·미녀 재해석 디자인 선택)
 
 ### [security-awareness](security-awareness/)
 - [부서 맞춤형 모의 훈련 시나리오 생성](security-awareness/phishing-simulation-generator/README.md) — 부서 업무 맥락에 맞는 모의 피싱 시나리오와 교육 자료 생성
