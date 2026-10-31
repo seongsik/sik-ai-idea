@@ -21,8 +21,9 @@ AI로 구체화하기 위한 아이디어 모음. 각 아이디어는 `카테고
 - [보안성 검토 1차 리뷰어](compliance/security-review-assistant/README.md) — 도입·변경 요청 문서를 체크리스트로 1차 검토하고 질문 목록 생성
 
 ### [game](game/)
+- **[공통 지침]** [스테이지 기반 전략 게임 기본 골격](game/stage-strategy-framework/README.md) — 스태미나, 난이도별 재도전, 4능력치 레벨 성장, 성향·페어 장비, 계정 성장, 하단 5탭 화면
 - **[공통 지침]** [게임 개발 공통 과금 지침](game/monetization-guideline/README.md) — 단일 재화, 고정 가격 비율, 등급 없는 뽑기, 무과금 클리어 보장 원칙
-- [격자 턴제 삼국지 공성전](game/three-kingdoms-grid-tactics/README.md) — 미녀 장수들로 삼국지 스토리를 따라 격자 맵 공성전을 펼치는 Android/iOS 글로벌 턴제 전략 게임
+- [격자 턴제 삼국지 공성전](game/three-kingdoms-grid-tactics/README.md) — 미녀 장수들로 삼국지 스토리를 따라 도트 탑뷰 격자 맵 공성전을 펼치는 Android/iOS 글로벌 턴제 전략 게임
 
 ### [security-awareness](security-awareness/)
 - [부서 맞춤형 모의 훈련 시나리오 생성](security-awareness/phishing-simulation-generator/README.md) — 부서 업무 맥락에 맞는 모의 피싱 시나리오와 교육 자료 생성
