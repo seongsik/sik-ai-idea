@@ -26,7 +26,7 @@ AI로 구체화하기 위한 아이디어 모음. 각 아이디어는 `카테고
 - **[공통 지침]** [스테이지 기반 전략 게임 기본 골격](game/stage-strategy-framework/README.md) — 게임 규칙: 가로 탑뷰 RPG(필드 모험·액션 + 턴제 핵심 전투 + 1:1 대결), 캐릭터·장비·성장, 화면과 대화 UI, 플랫폼 확장 대비
 - [아틀란티스 그리드 RPG (가칭)](game/atlantis-grid/README.md) — 아틀란티스 테마: 가라앉기 직전의 해양 문명을 지키며 수중 도시와 심해를 탐험한다
 - [코스믹 호러 그리드 RPG (가칭)](game/cosmic-horror-grid/README.md) — 코스믹 호러 테마: 1920년대 조사원들이 사교 집단을 막고 깨어나는 고대 존재를 다시 봉인한다 (H. P. 러브크래프트 원전)
-- [나일 그리드 RPG (가칭)](game/egypt-myth-grid/README.md) — 이집트 신화 테마: 호루스·아누비스·바스테트가 세트와 혼돈의 뱀에 맞서 질서를 되찾는다
+- [이집트 신화 그리드 RPG (가칭)](game/egypt-myth-grid/README.md) — 이집트 신화 테마: 호루스·아누비스·바스테트가 세트와 혼돈의 뱀에 맞서 질서를 되찾는다
 - [판타지 그리드 RPG (가칭)](game/fantasy-grid/README.md) — 판타지 세계 테마: 인간·엘프·드워프 모험가가 마왕군에 맞서 봉인석을 되찾는다
 - [조선 그리드 RPG (가칭)](game/joseon-grid/README.md) — 조선 500년 테마: 건국부터 개항까지 장마다 시대가 바뀌고, 이성계·이순신 등 조선의 인물과 함께 싸운다
 - [원탁 그리드 RPG (가칭)](game/medieval-europe-grid/README.md) — 중세 유럽 테마: 아서왕 전설의 원탁 기사들과 성을 공략하고 기사 결투를 치른다
