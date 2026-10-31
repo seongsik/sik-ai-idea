@@ -24,11 +24,16 @@ AI로 구체화하기 위한 아이디어 모음. 각 아이디어는 `카테고
 - **[공통 지침]** [게임 개발·출시 공통 지침](game/dev-release-guideline/README.md) — 엔진(Unity)과 코드 구조, 서버, 다국어(1차 4개 언어), 개발 도구와 AI 사용, 아트 파이프라인, 출시 체크리스트, 개발 단계
 - **[공통 지침]** [게임 개발 공통 과금 지침](game/monetization-guideline/README.md) — 단일 재화, 상위 상품 효율 상승, 등급 없는 뽑기, 광고와 광고 제거 상품, 환불 규정, 스팀판 과금, 무과금 클리어 보장
 - **[공통 지침]** [스테이지 기반 전략 게임 기본 골격](game/stage-strategy-framework/README.md) — 게임 규칙: 가로 탑뷰 RPG(필드 모험·액션 + 턴제 핵심 전투 + 1:1 대결), 캐릭터·장비·성장, 화면과 대화 UI, 플랫폼 확장 대비
+- [아틀란티스 그리드 RPG (가칭)](game/atlantis-grid/README.md) — 아틀란티스 테마: 가라앉기 직전의 해양 문명을 지키며 수중 도시와 심해를 탐험한다
+- [나일 그리드 RPG (가칭)](game/egypt-myth-grid/README.md) — 이집트 신화 테마: 호루스·아누비스·바스테트가 세트와 혼돈의 뱀에 맞서 질서를 되찾는다
+- [판타지 그리드 RPG (가칭)](game/fantasy-grid/README.md) — 판타지 세계 테마: 인간·엘프·드워프 모험가가 마왕군에 맞서 봉인석을 되찾는다
 - [조선 그리드 RPG (가칭)](game/joseon-grid/README.md) — 조선 500년 테마: 건국부터 개항까지 장마다 시대가 바뀌고, 이성계·이순신 등 조선의 인물과 함께 싸운다
 - [원탁 그리드 RPG (가칭)](game/medieval-europe-grid/README.md) — 중세 유럽 테마: 아서왕 전설의 원탁 기사들과 성을 공략하고 기사 결투를 치른다
+- [라그나로크 그리드 RPG (가칭)](game/norse-myth-grid/README.md) — 북유럽 신화 테마: 토르·발키리·오딘과 아홉 세계를 오가며 라그나로크를 막는다
 - [스타 그리드 RPG (가칭)](game/space-war-grid/README.md) — SF 우주전쟁 테마: 독립 함대를 이끌고 제국과 싸우며, 함대전은 턴제, 에이스 대결은 1:1 액션
 - [삼국지 그리드 RPG](game/three-kingdoms-grid-tactics/README.md) — 삼국지 테마: 유비·관우·장비와 필드를 모험하고 연의의 핵심 전투는 턴제, 일기토는 1:1 액션 (오리지널·미녀 재해석 디자인 선택)
 - [와일드 웨스트 그리드 RPG (가칭)](game/wild-west-grid/README.md) — 서부시대 테마: 보안관과 총잡이들이 무법자 소굴을 소탕하고 정오의 결투를 벌인다
+- [무협 그리드 RPG (가칭)](game/wuxia-grid/README.md) — 무협 테마: 멸문 문파의 제자가 강호를 누비며 경공으로 탐험하고 비무를 치른다 (창작 문파·무공)
 - [좀비 그리드 RPG (가칭)](game/zombie-apocalypse-grid/README.md) — 좀비 아포칼립스 테마: 생존자 팀이 무너진 도시를 탈출해 백신 연구소로 향한다
 
 ### [security-awareness](security-awareness/)
