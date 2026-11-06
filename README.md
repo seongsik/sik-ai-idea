@@ -21,7 +21,7 @@ AI로 구체화하기 위한 아이디어 모음. 각 아이디어는 `카테고
 - [보안성 검토 1차 리뷰어](compliance/security-review-assistant/README.md) — 도입·변경 요청 문서를 체크리스트로 1차 검토하고 질문 목록 생성
 
 ### [finance](finance/)
-- [멀티에이전트 투자심의 포트폴리오 자문](finance/multi-agent-investment-committee/README.md) — 뉴스·SNS·증시를 24시간 감시해 종목을 발굴하고, 성향이 다른 AI 운용역들이 투자심의와 가상 포트폴리오 경쟁을 거쳐 개인 자산관리 조언과 리스크 경보 제공
+- [멀티에이전트 투자심의 포트폴리오 자문](finance/multi-agent-investment-committee/README.md) — 국내·미국 증시와 뉴스·SNS를 24시간 감시해 종목을 발굴하고, 분야별 비판적 전문가 운용역 5명이 투자심의와 가상 포트폴리오 경쟁을 거쳐 개인 자산관리 조언과 리스크 경보 제공
 
 ### [game](game/)
 - **[공통 지침]** [게임 개발·출시 공통 지침](game/dev-release-guideline/README.md) — 엔진(Unity)과 코드 구조, 서버, 다국어(1차 4개 언어), 개발 도구와 AI 사용, 아트 파이프라인, 출시 체크리스트, 개발 단계
