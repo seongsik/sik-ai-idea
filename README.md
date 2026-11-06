@@ -20,6 +20,9 @@ AI로 구체화하기 위한 아이디어 모음. 각 아이디어는 `카테고
 - [개인정보 처리방침-실제 수집 정합성 점검](compliance/privacy-policy-consistency-checker/README.md) — 처리방침과 실제 폼·쿠키·외부 스크립트를 비교해 고지 누락 탐지
 - [보안성 검토 1차 리뷰어](compliance/security-review-assistant/README.md) — 도입·변경 요청 문서를 체크리스트로 1차 검토하고 질문 목록 생성
 
+### [finance](finance/)
+- [멀티에이전트 투자심의 포트폴리오 자문](finance/multi-agent-investment-committee/README.md) — 뉴스·SNS·증시를 24시간 감시해 종목을 발굴하고, 성향이 다른 AI 운용역들이 투자심의와 가상 포트폴리오 경쟁을 거쳐 개인 자산관리 조언과 리스크 경보 제공
+
 ### [game](game/)
 - **[공통 지침]** [게임 개발·출시 공통 지침](game/dev-release-guideline/README.md) — 엔진(Unity)과 코드 구조, 서버, 다국어(1차 4개 언어), 개발 도구와 AI 사용, 아트 파이프라인, 출시 체크리스트, 개발 단계
 - **[공통 지침]** [게임 개발 공통 과금 지침](game/monetization-guideline/README.md) — 단일 재화, 상위 상품 효율 상승, 등급 없는 뽑기, 광고와 광고 제거 상품, 환불 규정, 스팀판 과금, 무과금 클리어 보장
