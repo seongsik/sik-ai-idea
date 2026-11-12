@@ -46,3 +46,20 @@ AI로 구체화하기 위한 아이디어 모음. 각 아이디어는 `카테고
 - [피싱 신고 메일 자동 분석](security-ops/phishing-report-analyzer/README.md) — 신고 메일 판정, 동일 수신자 일괄 조치, 신고자 자동 회신
 - [자산 맞춤형 위협 인텔리전스 브리핑](security-ops/threat-intel-briefing/README.md) — 보유 자산과 관련된 CVE·보안 공지만 골라 매일 요약
 - [취약점 진단 결과 정규화 및 조치 가이드 생성](security-ops/vuln-report-normalizer/README.md) — 스캐너·모의해킹 결과 통합, 중복 제거, 개발자용 수정 가이드
+
+### [security-solution](security-solution/)
+- [AI·LLM 보안](security-solution/ai-llm-security/README.md) — (신규) 외부 AI 사용 시 민감정보 마스킹, 사내 LLM 입출력 검사, 자동 레드팀
+- [백신·EDR 엔진](security-solution/antivirus-edr-engine/README.md) — (사내 개발) 샘플 분석 보고서와 YARA·행위 룰 초안 자동 생성, 오탐 측정 후 배포
+- [인증·PKI·MFA](security-solution/auth-pki-mfa/README.md) — (신규) SSO·MFA·사설 CA, 레거시 연동 커넥터와 표준 적합성 테스트 자동 생성
+- [클라우드 워크로드 보호 (CWPP)](security-solution/cloud-workload-protection/README.md) — (신규) 이미지·설정 점검 정책과 eBPF 런타임 탐지 룰을 기준 문서에서 자동 생성
+- [DB·서버 접근통제](security-solution/db-server-access-control/README.md) — (사내 개발) DBMS 프로토콜 파서 생성, 버전 매트릭스 회귀 테스트, 자연어 위험 명령 정책
+- [DRM 문서보안](security-solution/drm-document-security/README.md) — (사내 개발) 응용프로그램 버전별 호환성 테스트 팜과 장애 분석 보조
+- [침입탐지·방지 시스템 (IDS/IPS)](security-solution/ids-ips/README.md) — (사내 개발) CVE·PoC로 탐지 룰과 검증 트래픽을 생성하고 회귀 테스트
+- [모바일 앱 보안](security-solution/mobile-app-security/README.md) — (신규) 앱 위변조·루팅·후킹 탐지, 우회 기법 재현 테스트, 취약점 점검 보고서
+- [네트워크 접근 통제 (NAC)](security-solution/nac/README.md) — (사내 개발) 장비 연동 어댑터 자동 생성, 단말 자동 식별, 정책 시뮬레이션
+- [망연계 솔루션](security-solution/network-separation-transfer/README.md) — (사내 개발) 연계 어댑터와 CDR 무해화 모듈 자동 생성, 데이터 등급별 연계 정책
+- [OT·IoT 보안](security-solution/ot-iot-security/README.md) — (신규) 산업용 프로토콜 파서 자동 생성, 수동 방식 자산 식별과 통신 기준선 탐지
+- [개인정보 검색](security-solution/pii-discovery/README.md) — (사내 개발) 패턴 검출 + 문맥 판별로 오탐 감소, 문서 파서·합성 테스트 셋 자동 생성
+- [SIEM·통합로그](security-solution/siem-log-integration/README.md) — (신규) 로그 샘플로 파서 자동 생성, 상관분석 룰 백테스트, 자연어 검색
+- [취약점 진단 자동화](security-solution/vuln-assessment-automation/README.md) — (신규) 국내 진단 기준 점검 스크립트를 자동 생성하고 양호·취약 환경에서 검증
+- [웹방화벽 (WAF)](security-solution/waf/README.md) — (신규) 우회 변형 공격 자동 테스트, 학습 기반 허용 정책, 오탐 예외 초안
