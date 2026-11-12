@@ -14,7 +14,7 @@ AI로 구체화하기 위한 아이디어 모음. 각 아이디어는 `카테고
 -->
 
 ### [ai-dev-tools](ai-dev-tools/)
-- [Claude Code 권한 요청 자동 판정 에이전트](ai-dev-tools/permission-auto-approver/README.md) — 훅으로 권한 요청을 받아 정책에 따라 자동 허용·거부, 애매한 것만 사람에게 원격 승인
+- [Claude Code 무인 실행 설정](ai-dev-tools/permission-auto-approver/README.md) — 권한 요청은 전부 허용, 질문은 권장안으로 자동 응답하는 설정과 훅 묶음 (격리 환경 전용)
 
 ### [compliance](compliance/)
 - [계정·권한 정기 검토 보조](compliance/access-review-assistant/README.md) — 인사 데이터와 시스템 계정을 대조해 이상 계정을 찾고 부서장 확인까지 자동화

@@ -1,109 +1,218 @@
-# Claude Code 권한 요청 자동 판정 에이전트
+# Claude Code 무인 실행 설정 (권한 전부 허용 + 질문은 권장안)
 
-> 한 줄 요약: Claude Code가 도구 실행 권한을 물을 때마다 사람이 "허용/항상 허용"을 누르는 대신, 사내 정책에 따라 안전한 요청은 자동 허용하고 위험한 요청은 거부하거나 사람에게 넘기는 판정기를 만든다.
+> 한 줄 요약: Claude Code가 권한을 물으면 모두 허용하고, 선택 질문을 하면 권장안을 고른 것으로 처리해, 사람이 화면 앞에 없어도 작업이 멈추지 않게 하는 설정 묶음(설정 파일 + 훅 스크립트 3개 + 지시문)을 만든다.
 
 - 카테고리: ai-dev-tools
-- 상태: 아이디어
+- 상태: 구체화 중
 - 작성일: 2026-11-12
 - 구현 리포지터리: -
 
 ## 배경 / 문제
 
-- Claude Code로 긴 작업을 맡기면 `npm test`, `git status` 같은 뻔한 명령에도 권한 확인 창이 떠서 작업이 멈추고, 사람이 화면 앞에 붙어 있어야 한다.
-- 그렇다고 모든 권한을 건너뛰는 모드(`--dangerously-skip-permissions`, bypassPermissions)를 쓰면 `rm -rf`, 비밀키 읽기, 운영 서버 접속까지 막을 수 없다.
-- 개발자마다 "항상 허용" 규칙을 제각각 쌓아 두므로 팀 차원의 기준과 감사 기록이 없다.
+- Claude Code로 긴 작업을 맡기면 `npm test`, `git status` 같은 명령에도 권한 확인 창이 떠서 작업이 멈춘다.
+- 선택지가 있으면 Claude가 질문 창(AskUserQuestion)을 띄우거나, 응답 끝에 "진행할까요?"라고 묻고 멈춘다.
+- 사람이 계속 붙어 있어야 해서 자리를 비우거나 밤새 작업을 돌릴 수 없다.
 
-## 구현 방식 비교 (결론)
+## 결정 사항
 
-| 방식 | 동작 | 판단 |
-|---|---|---|
-| A. 훅 기반 판정기 (권장) | Claude Code의 `PermissionRequest`·`PreToolUse` 훅이 요청 내용(도구 이름, 명령, 파일 경로)을 JSON으로 받아 allow / deny / ask를 돌려준다 | 공식 기능, 요청 내용을 정확히 볼 수 있음, 빠르고 기록이 남음 |
-| B. 권한 규칙 자동 관리 | 실제 승인 이력을 분석해 `settings.json`의 `permissions.allow`·`deny` 규칙 후보를 만들고 사람이 승인 | "항상 허용"을 체계적으로 대체. A와 함께 쓴다 |
-| C. Agent SDK `canUseTool` 콜백 | SDK로 Claude를 직접 돌리는 경우 콜백 함수에서 판정 | 자체 에이전트 서비스를 만들 때 사용 |
-| D. 화면 입력 대행 (컴퓨터 사용 모델, 오픈소스 GUI 에이전트, xdotool·pyautogui) | 화면을 읽고 "허용" 버튼을 대신 누른다 | 비권장. 화면 문구로만 판단해 무엇을 승인하는지 정확히 모르고, UI가 바뀌면 깨지며, 결국 "무조건 허용"과 같아진다. 훅을 쓸 수 없는 데스크톱 GUI 앱에만 최후 수단 |
+- **모든 권한 요청을 허용한다.** 요청별 판정(규칙·AI 판정)은 하지 않는다.
+- **질문은 권장안을 수용한다.** 권장안이 표시되지 않은 질문은 첫 번째 선택지를 고른다.
+- **외부 메신저(Slack 등)와 원격 승인은 쓰지 않는다.**
+- 그 대신 위험은 **실행 환경을 격리**하는 것으로 줄이고, 자동으로 정한 내용은 **결정 로그**로 남겨 나중에 사람이 검토한다.
 
 ## 목표
 
-- 정책상 안전한 요청(읽기, 테스트, 린트, 작업 폴더 안 편집)은 사람 개입 없이 자동 허용한다.
-- 정책상 금지된 요청(작업 폴더 밖 삭제, 비밀 파일 읽기, 강제 푸시, 운영 접속)은 자동 거부하고 이유를 Claude에게 돌려준다.
-- 애매한 요청만 사람에게 묻고, 메신저·모바일로 승인할 수 있게 한다.
-- 모든 판정을 기록하고, 반복 승인된 패턴을 "항상 허용" 규칙 후보로 제안한다.
+- 권한 확인 창 때문에 작업이 멈추지 않는다.
+- 질문 창과 "할까요?" 식의 텍스트 질문 때문에 작업이 멈추지 않는다.
+- 자동으로 고른 답과 허용한 요청이 파일로 남아 작업 후 검토할 수 있다.
 
 ## 범위 밖 (Non-goals)
 
-- 권한 확인을 통째로 끄는 것 (판정 없이 전부 허용).
-- 화면 클릭 자동화를 기본 방식으로 쓰는 것 (구현 방식 비교 D).
-- Claude Code 자체 수정.
+- 요청별 위험도 판정, 허용·거부 규칙 관리.
+- Slack·메신저·모바일 원격 승인.
+- 화면 클릭 자동화(컴퓨터 사용 모델, xdotool 등). 아래 방식으로 모두 처리되므로 쓸 이유가 없다.
 
-## 사용자 / 사용 시나리오
+## 구현 방법
 
-1. 개발자가 팀 공용 판정기 훅을 `.claude/settings.json`에 등록하고 Claude Code에 긴 작업을 맡긴다.
-2. Claude가 `npm test`를 실행하려 하면 훅이 허용 규칙에 맞는 것을 확인하고 바로 허용한다.
-3. Claude가 `.env`를 읽으려 하면 훅이 거부하고 "비밀 파일은 읽을 수 없음, 예시 파일을 참고할 것"이라는 이유를 돌려준다. Claude는 다른 방법으로 작업을 이어 간다.
-4. 규칙에 없는 `curl ... | sh` 요청은 LLM 판정기가 위험도를 매기고, 중간 이상이면 개발자 메신저로 승인 요청을 보낸다.
-5. 주간 보고서에 "사람이 10번 넘게 허용한 패턴"이 규칙 후보로 올라오고, 팀 리드가 승인하면 공용 규칙에 반영된다.
+멈추는 지점이 네 군데이고, 각각 다른 장치로 막는다.
+
+| 멈추는 지점 | 막는 장치 | 설명 |
+|---|---|---|
+| 1. 도구 권한 확인 | 권한 모드 `bypassPermissions` | 권한 확인 없이 모든 도구를 실행한다. CLI 옵션 `--dangerously-skip-permissions`와 같다 |
+| 2. 그래도 남는 권한 확인 | `PermissionRequest` 훅 → 항상 allow | 모드로 빠지지 않는 확인 창(계획 승인 등)을 잡는 안전망 |
+| 3. 질문 창(AskUserQuestion) | `PreToolUse` 훅(matcher `AskUserQuestion`) | 권장안을 골라 Claude에게 돌려준다 |
+| 4. 텍스트로 묻고 끝내기("진행할까요?") | `Stop` 훅 + CLAUDE.md 지시문 | 질문으로 끝나면 "권장안으로 계속하라"며 종료를 한 번 막는다 |
+
+### 1. 설정 파일 (`.claude/settings.json`)
+
+```json
+{
+  "permissions": {
+    "defaultMode": "bypassPermissions"
+  },
+  "hooks": {
+    "PermissionRequest": [
+      { "matcher": "*", "hooks": [{ "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/allow_all.py\"" }] }
+    ],
+    "PreToolUse": [
+      { "matcher": "AskUserQuestion", "hooks": [{ "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/answer_recommended.py\"" }] }
+    ],
+    "Stop": [
+      { "hooks": [{ "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/no_question_stop.py\"" }] }
+    ]
+  }
+}
+```
+
+- 무인 실행(`claude -p "작업"`)이면 `--permission-mode bypassPermissions` 또는 `--dangerously-skip-permissions`를 붙인다.
+- root 계정에서는 이 모드가 거부될 수 있다. 컨테이너 안이면 일반 계정으로 실행한다.
+
+### 2. `allow_all.py` — 남는 권한 확인을 모두 허용
+
+```python
+import json, sys, datetime
+req = json.load(sys.stdin)
+with open(".claude/decision-log.jsonl", "a", encoding="utf-8") as f:
+    f.write(json.dumps({"t": datetime.datetime.now().isoformat(), "type": "permission",
+                        "tool": req.get("tool_name"), "input": req.get("tool_input")}, ensure_ascii=False) + "\n")
+print(json.dumps({"hookSpecificOutput": {"hookEventName": "PermissionRequest",
+                                          "decision": {"behavior": "allow"}}}))
+```
+
+### 3. `answer_recommended.py` — 질문 창에 권장안으로 답하기
+
+질문 창의 선택지 중 이름에 "(Recommended)"나 "권장"이 붙은 것을 고르고, 없으면 첫 번째 선택지를 고른다. Claude는 권장안을 첫 번째 선택지로 두고 "(Recommended)"를 붙이는 관례가 있다.
+
+```python
+import json, sys, datetime
+req = json.load(sys.stdin)
+questions = req.get("tool_input", {}).get("questions", [])
+
+def pick(q):
+    opts = q.get("options", [])
+    for o in opts:
+        if "Recommended" in o["label"] or "권장" in o["label"]:
+            return o["label"]
+    return opts[0]["label"] if opts else "권장안으로 진행"
+
+answers = {q["question"]: pick(q) for q in questions}
+with open(".claude/decision-log.jsonl", "a", encoding="utf-8") as f:
+    f.write(json.dumps({"t": datetime.datetime.now().isoformat(), "type": "question",
+                        "answers": answers}, ensure_ascii=False) + "\n")
+
+reason = ("사용자는 자리에 없어 답할 수 없다. 아래 답을 사용자가 고른 것으로 보고 질문 없이 계속 진행하라.\n"
+          + "\n".join(f"- {q} → {a}" for q, a in answers.items()))
+print(json.dumps({"hookSpecificOutput": {"hookEventName": "PreToolUse",
+                                          "permissionDecision": "deny",
+                                          "permissionDecisionReason": reason}}))
+```
+
+- 질문 창을 띄우지 않고(deny) 거부 이유에 고른 답을 담아 돌려준다. Claude는 거부 이유를 읽고 그 답으로 작업을 이어 간다. 버전에 덜 의존하는 방식이다.
+- 다른 방식으로, `permissionDecision: "allow"`와 함께 `updatedInput`에 `answers`(질문 → 고른 선택지)를 채워 질문 창이 답을 받은 것처럼 처리할 수도 있다. 사용 중인 Claude Code 버전에서 지원하는지 먼저 확인해야 한다.
+
+### 4. `no_question_stop.py` — "진행할까요?"로 끝내지 못하게
+
+```python
+import json, sys, re
+req = json.load(sys.stdin)
+if req.get("stop_hook_active"):        # 이미 한 번 계속시켰으면 그대로 끝낸다 (무한 반복 방지)
+    sys.exit(0)
+last = ""
+with open(req["transcript_path"], encoding="utf-8") as f:
+    for line in f:
+        e = json.loads(line)
+        if e.get("type") == "assistant":
+            for c in e.get("message", {}).get("content", []):
+                if c.get("type") == "text":
+                    last = c["text"]
+tail = last.strip()[-200:]
+if re.search(r"(\?|할까요|하시겠습니까|원하시나요|알려 ?주세요)\s*$", tail):
+    print(json.dumps({"decision": "block",
+                      "reason": "사용자는 답하지 않는다. 방금 질문에 대해 권장안을 골라 결정 로그에 남기고 계속 진행하라. 더 할 일이 없으면 결과만 보고하고 끝내라."}))
+```
+
+### 5. CLAUDE.md 지시문 (질문 자체를 줄이기)
+
+```markdown
+## 무인 실행 규칙
+- 사용자는 작업 중 응답하지 않는다. 질문하지 말고, 선택이 필요하면 권장안을 골라 진행한다.
+- 고른 내용은 `.claude/decision-log.md`에 "결정 / 선택지 / 고른 이유" 한 줄로 남긴다.
+- 끝낼 때 자동으로 정한 결정 목록을 보고에 포함한다.
+```
+
+### 6. 실행 환경 (권장)
+
+- 전부 허용이므로 **격리된 환경에서만 쓴다**: 개발 컨테이너·VM·클라우드 세션. 개인 PC의 홈 폴더 전체나 운영 서버 접속 정보가 있는 환경에서는 쓰지 않는다.
+- 운영 계정, 클라우드 관리자 키, 사내 중요 시스템 접속 정보를 그 환경에 두지 않는다.
+- 작업 브랜치에서만 작업하고, 작업 전 커밋해 두어 언제든 되돌릴 수 있게 한다.
+
+## 사용 시나리오
+
+1. 개발자가 격리된 개발 컨테이너에서 위 설정이 들어간 저장소를 열고 Claude Code에 긴 작업을 맡긴 뒤 자리를 비운다.
+2. 권한 확인은 모두 자동 허용되고, Claude가 선택지를 물으면 권장안이 자동으로 선택된다.
+3. Claude가 "이렇게 진행할까요?"로 끝내려 하면 Stop 훅이 한 번 계속시킨다.
+4. 돌아온 개발자는 결과와 `.claude/decision-log.jsonl`·`decision-log.md`의 자동 결정 목록을 검토하고, 마음에 들지 않는 결정만 다시 지시한다.
 
 ## 핵심 기능
 
-- [ ] 훅 판정기: 요청 JSON을 받아 allow / deny / ask와 이유를 반환
-- [ ] 정책 3단계: 결정적 규칙(허용·거부 목록, 경로·명령 패턴) → LLM 위험도 판정 → 사람 승인
-- [ ] 명령 분석: 파이프·`&&`·서브셸로 이어진 셸 명령을 쪼개 각각 판정
-- [ ] 원격 승인: 메신저·모바일로 ask 요청 승인/거부, 시간 초과 시 거부
-- [ ] 판정 감사 로그와 대시보드
-- [ ] 승인 이력 기반 "항상 허용" 규칙 후보 제안
+- [ ] 권한 모드 bypassPermissions 설정
+- [ ] PermissionRequest 전부 허용 훅
+- [ ] AskUserQuestion 권장안 자동 응답 훅
+- [ ] 질문으로 끝나는 응답을 계속시키는 Stop 훅
+- [ ] 무인 실행 CLAUDE.md 지시문
+- [ ] 결정 로그(허용한 요청, 고른 답)
+- [ ] 설치 스크립트(위 파일을 저장소에 복사)
 
 ## 기술 구상
 
-- 기술 스택: Python 또는 TypeScript(훅 스크립트), 셸 명령 파서(bashlex 등), 정책 파일(YAML), 판정용 LLM(Claude API 소형 모델 또는 사내 모델), SQLite/PostgreSQL(로그)
-- 아키텍처: Claude Code → 훅(`PermissionRequest`/`PreToolUse`) → 판정기(규칙 → LLM → 사람) → 결과 JSON → Claude Code / 로그 → 규칙 제안 배치
-- 외부 연동: Slack·Teams(원격 승인), SIEM(감사 로그), 사내 SSO(승인자 확인)
-- 판정 원칙:
-  - 결정적 규칙이 LLM보다 먼저 적용되고, 거부 규칙은 어떤 판정으로도 뒤집히지 않는다.
-  - LLM 판정기에는 요청 내용만 주고, 작업 중인 대화나 파일 내용은 주지 않는다 (프롬프트 인젝션이 판정기로 번지는 것을 막는다).
-  - 판정기 오류·시간 초과는 ask(사람에게 넘김)로 처리한다.
+- 기술 스택: Python 3 표준 라이브러리만 사용(훅 스크립트), JSON 설정
+- 배포: 팀 공용 템플릿 저장소 또는 Claude Code 플러그인으로 묶어 저장소마다 설치
+- 외부 연동: 없음
 
 ## 구현 단계 (MVP → 확장)
 
-1. MVP: 결정적 규칙만 쓰는 훅 판정기 + 로그. 허용·거부 목록 기본값 제공.
-2. LLM 위험도 판정, 셸 명령 분해, 메신저 원격 승인.
-3. 승인 이력 기반 규칙 제안, 팀 공용 정책 배포, Agent SDK `canUseTool` 어댑터.
-4. (선택) 훅을 쓸 수 없는 GUI 도구용 화면 입력 대행 어댑터. 이때도 판정은 같은 정책 엔진을 거친다.
+1. MVP: 설정 파일 + 훅 3개 + 지시문. 실제 작업 몇 개로 멈춤 없이 끝나는지 확인한다.
+2. 결정 로그를 작업 끝에 요약 보고서로 만들어 주는 기능.
+3. 플러그인으로 묶어 설치를 한 줄로.
 
 ## 열린 질문 / 리스크
 
-- 자동 허용은 보안 통제를 줄이는 일이다. 사내 보안 정책상 허용 가능한 자동 승인 범위를 먼저 정해야 한다.
-- 저장소 안의 문서·코드에 심어진 프롬프트 인젝션이 Claude에게 위험 명령을 시킬 수 있다. 판정기가 마지막 방어선이므로 거부 규칙을 보수적으로 둔다.
-- 훅 이벤트 이름과 입출력 형식은 Claude Code 버전에 따라 바뀔 수 있다. 구현 시점의 공식 문서를 기준으로 한다.
-- Claude Code에는 AI 분류기가 권한을 판정하는 auto 모드와 공식 프롬프트 기반(LLM) 훅이 이미 있고, 같은 목적의 오픈소스 훅도 여럿 있다(참고 자료). 새로 만들기보다 이것들을 조합하고 사내 정책·원격 승인·감사 기록 부분에 집중할지 정한다.
-- `PermissionRequest` 훅은 비대화형(`-p`) 실행에서는 호출되지 않는다는 보고가 있다. 무인 실행에서는 `PreToolUse` 훅이나 SDK `canUseTool`로 판정한다.
-- 화면 입력 대행 방식은 무엇을 승인하는지 확인할 수 없어 감사 요건을 만족하기 어렵다.
+- 모든 권한을 허용하므로, 저장소 안 문서나 웹 페이지에 심어진 프롬프트 인젝션이 시키는 명령도 실행된다. 격리된 환경과 중요 접속 정보 제거가 유일한 방어선이다.
+- 권장안이 항상 맞지는 않다. 결정 로그를 반드시 검토한다.
+- 훅 이벤트 이름, 입력 JSON 필드(`tool_input.questions`, `transcript_path`, `stop_hook_active`), 출력 형식은 Claude Code 버전에 따라 바뀔 수 있다. 구현 시점의 공식 문서로 확인하고, 질문 창 처리(3번)는 실제로 한 번 띄워 동작을 확인한다.
+- 비대화형(`-p`) 실행에서는 `PermissionRequest` 훅이 호출되지 않는다는 보고가 있다. 이 경우에도 bypassPermissions 모드가 권한을 처리하므로 문제는 없다.
+- Stop 훅의 질문 판별이 정규식이라 놓치거나 잘못 잡을 수 있다. `stop_hook_active`로 연속 1회만 계속시켜 무한 반복은 막는다.
 
 ## 요구사항 후보
 
 | ID | 제목 | 설명 | 우선순위 | 상태 | 출처 |
 |---|---|---|---|---|---|
-| REQ-후보-01 | 훅 기반 판정 | 권한 요청은 훅으로 받아 allow / deny / ask와 이유를 반환한다 | 상 | 제안 | 구현 방식 비교 |
-| REQ-후보-02 | 규칙 우선 | 결정적 규칙을 LLM 판정보다 먼저 적용하고, 거부 규칙은 뒤집지 않는다 | 상 | 제안 | 기술 구상 |
-| REQ-후보-03 | 실패 시 사람에게 | 판정기 오류·시간 초과는 ask로 처리한다 | 상 | 제안 | 기술 구상 |
-| REQ-후보-04 | 판정기 입력 격리 | LLM 판정기에는 요청 내용만 주고 대화·파일 내용은 주지 않는다 | 상 | 제안 | 기술 구상 |
-| REQ-후보-05 | 셸 명령 분해 | 이어진 셸 명령은 쪼개서 각각 판정하고 하나라도 거부면 거부한다 | 상 | 제안 | 핵심 기능 |
-| REQ-후보-06 | 감사 로그 | 모든 판정을 요청 내용·결과·근거와 함께 기록한다 | 중 | 제안 | 핵심 기능 |
-| REQ-후보-07 | 원격 승인 | ask 요청을 메신저로 승인·거부하고 시간 초과 시 거부한다 | 중 | 제안 | 핵심 기능 |
-| REQ-후보-08 | 규칙 후보 제안 | 반복 승인 패턴을 "항상 허용" 규칙 후보로 제안하고 사람 승인 후 반영한다 | 하 | 제안 | 핵심 기능 |
+| REQ-후보-01 | 훅 기반 판정 | 권한 요청은 훅으로 받아 allow / deny / ask와 이유를 반환한다 | 상 | 폐기 | 결정 사항 (전부 허용으로 변경, REQ-후보-09로 대체) |
+| REQ-후보-02 | 규칙 우선 | 결정적 규칙을 LLM 판정보다 먼저 적용하고, 거부 규칙은 뒤집지 않는다 | 상 | 폐기 | 결정 사항 (요청별 판정 안 함) |
+| REQ-후보-03 | 실패 시 사람에게 | 판정기 오류·시간 초과는 ask로 처리한다 | 상 | 폐기 | 결정 사항 (사람 개입 없음) |
+| REQ-후보-04 | 판정기 입력 격리 | LLM 판정기에는 요청 내용만 주고 대화·파일 내용은 주지 않는다 | 상 | 폐기 | 결정 사항 (LLM 판정기 없음) |
+| REQ-후보-05 | 셸 명령 분해 | 이어진 셸 명령은 쪼개서 각각 판정하고 하나라도 거부면 거부한다 | 상 | 폐기 | 결정 사항 (요청별 판정 안 함) |
+| REQ-후보-06 | 감사 로그 | 모든 판정을 요청 내용·결과·근거와 함께 기록한다 | 중 | 폐기 | 결정 사항 (REQ-후보-13으로 대체) |
+| REQ-후보-07 | 원격 승인 | ask 요청을 메신저로 승인·거부하고 시간 초과 시 거부한다 | 중 | 폐기 | 결정 사항 (Slack 등 메신저 사용 불가) |
+| REQ-후보-08 | 규칙 후보 제안 | 반복 승인 패턴을 "항상 허용" 규칙 후보로 제안하고 사람 승인 후 반영한다 | 하 | 폐기 | 결정 사항 (전부 허용이라 규칙 불필요) |
+| REQ-후보-09 | 권한 전부 허용 | bypassPermissions 모드와 PermissionRequest 허용 훅으로 모든 권한 요청을 허용한다 | 상 | 승인 | 결정 사항 |
+| REQ-후보-10 | 질문 창 권장안 응답 | AskUserQuestion은 권장안(없으면 첫 번째 선택지)을 고른 것으로 처리한다 | 상 | 승인 | 결정 사항 |
+| REQ-후보-11 | 텍스트 질문 계속 진행 | 응답이 질문으로 끝나면 Stop 훅이 연속 1회까지 권장안으로 계속 진행시킨다 | 중 | 제안 | 구현 방법 4 |
+| REQ-후보-12 | 무인 실행 지시문 | CLAUDE.md에 "질문하지 말고 권장안으로 진행" 지시문을 둔다 | 중 | 제안 | 구현 방법 5 |
+| REQ-후보-13 | 결정 로그 | 허용한 요청과 자동으로 고른 답을 파일로 남기고 작업 끝에 보고한다 | 중 | 제안 | 구현 방법 2, 3, 5 |
+| REQ-후보-14 | 격리 환경 전용 | 컨테이너·VM 등 운영 접속 정보가 없는 환경에서만 사용한다 | 상 | 제안 | 구현 방법 6 |
 
 ## 참고 자료
 
 - Claude Code 훅 문서: https://code.claude.com/docs/en/hooks
 - Claude Code 권한·설정 문서: https://code.claude.com/docs/en/settings
-- Claude Agent SDK 권한 처리(`canUseTool`) 문서
-- 관련 오픈소스 (2026-11 조사, 코드·유지보수 상태는 미검증):
-  - 규칙 기반 자동 허용: psd401/claude-auto-approve (설정의 허용 패턴을 쓰고 deny/ask 규칙 존중, JSONL 로그) — https://github.com/psd401/claude-auto-approve
-  - AI 판정 + 학습: froggeric/claude-smart-approval (모르는 Bash 명령은 AI 판정, 복합 명령에서도 거부 목록 우선, 승인 패턴 학습) — https://github.com/froggeric/claude-smart-approval
-  - AI 판정: ahmed-anas/claude-gatekeeper (Haiku로 판정, 위험·애매하면 이유와 함께 거부) — https://github.com/ahmed-anas/claude-gatekeeper
-  - AI 판정 + 캐시: malcomsonbrothers/claude-code-permission-hook (npm 설치) — https://github.com/malcomsonbrothers/claude-code-permission-hook
-  - 복합 명령 분해: liberzon/claude-hooks (PreToolUse에서 하위 명령별로 허용·거부 패턴 검사) — https://github.com/liberzon/claude-hooks
-  - 위험 명령 차단 모음: karanb192/claude-code-hooks — https://github.com/karanb192/claude-code-hooks
-  - 모바일 원격 승인: yuuichieguchi/claude-remote-approver (ntfy 푸시, 허용·항상 허용·거부 버튼) — https://github.com/yuuichieguchi/claude-remote-approver
-  - 원격 승인 플러그인: Manta-Network/cc-remote-approval (로컬 창과 원격 중 먼저 답한 쪽 적용) — https://github.com/Manta-Network/cc-remote-approval
-  - Slack 승인 + 정책 + 서명 감사 로그: jeremylongshore/claude-code-slack-channel — https://github.com/jeremylongshore/claude-code-slack-channel
 - 참고 이슈: `PermissionRequest` 훅은 비대화형(`-p`) 모드에서 실행되지 않는다는 지적 — https://github.com/anthropics/claude-code/issues/26703
+- 관련 오픈소스 (2026-11 조사, 코드·유지보수 상태는 미검증. 대부분 요청별 판정 방식이라 이번 결정과는 다르지만 훅 작성 예시로 참고):
+  - psd401/claude-auto-approve (규칙 기반 자동 허용, JSONL 로그) — https://github.com/psd401/claude-auto-approve
+  - froggeric/claude-smart-approval (AI 판정 + 승인 패턴 학습) — https://github.com/froggeric/claude-smart-approval
+  - ahmed-anas/claude-gatekeeper (Haiku로 판정) — https://github.com/ahmed-anas/claude-gatekeeper
+  - malcomsonbrothers/claude-code-permission-hook (AI 판정 + 캐시, npm 설치) — https://github.com/malcomsonbrothers/claude-code-permission-hook
+  - liberzon/claude-hooks (복합 명령 분해 검사) — https://github.com/liberzon/claude-hooks
+  - karanb192/claude-code-hooks (위험 명령 차단 모음) — https://github.com/karanb192/claude-code-hooks
+  - yigitkonur/hooks-claude-code (계획 승인 자동 허용) — https://github.com/yigitkonur/hooks-claude-code
+  - yuuichieguchi/claude-remote-approver, Manta-Network/cc-remote-approval, jeremylongshore/claude-code-slack-channel (원격 승인 — 이번 결정에서는 사용 안 함)
