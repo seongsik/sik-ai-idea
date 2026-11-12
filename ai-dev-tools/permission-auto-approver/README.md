@@ -74,7 +74,8 @@
 - 자동 허용은 보안 통제를 줄이는 일이다. 사내 보안 정책상 허용 가능한 자동 승인 범위를 먼저 정해야 한다.
 - 저장소 안의 문서·코드에 심어진 프롬프트 인젝션이 Claude에게 위험 명령을 시킬 수 있다. 판정기가 마지막 방어선이므로 거부 규칙을 보수적으로 둔다.
 - 훅 이벤트 이름과 입출력 형식은 Claude Code 버전에 따라 바뀔 수 있다. 구현 시점의 공식 문서를 기준으로 한다.
-- Claude Code에 이미 분류기 기반 자동 권한 모드가 있다면 그것과 비교해 사내 정책·감사 기록 부분에 집중할지 정한다.
+- Claude Code에는 AI 분류기가 권한을 판정하는 auto 모드와 공식 프롬프트 기반(LLM) 훅이 이미 있고, 같은 목적의 오픈소스 훅도 여럿 있다(참고 자료). 새로 만들기보다 이것들을 조합하고 사내 정책·원격 승인·감사 기록 부분에 집중할지 정한다.
+- `PermissionRequest` 훅은 비대화형(`-p`) 실행에서는 호출되지 않는다는 보고가 있다. 무인 실행에서는 `PreToolUse` 훅이나 SDK `canUseTool`로 판정한다.
 - 화면 입력 대행 방식은 무엇을 승인하는지 확인할 수 없어 감사 요건을 만족하기 어렵다.
 
 ## 요구사항 후보
@@ -95,3 +96,14 @@
 - Claude Code 훅 문서: https://code.claude.com/docs/en/hooks
 - Claude Code 권한·설정 문서: https://code.claude.com/docs/en/settings
 - Claude Agent SDK 권한 처리(`canUseTool`) 문서
+- 관련 오픈소스 (2026-11 조사, 코드·유지보수 상태는 미검증):
+  - 규칙 기반 자동 허용: psd401/claude-auto-approve (설정의 허용 패턴을 쓰고 deny/ask 규칙 존중, JSONL 로그) — https://github.com/psd401/claude-auto-approve
+  - AI 판정 + 학습: froggeric/claude-smart-approval (모르는 Bash 명령은 AI 판정, 복합 명령에서도 거부 목록 우선, 승인 패턴 학습) — https://github.com/froggeric/claude-smart-approval
+  - AI 판정: ahmed-anas/claude-gatekeeper (Haiku로 판정, 위험·애매하면 이유와 함께 거부) — https://github.com/ahmed-anas/claude-gatekeeper
+  - AI 판정 + 캐시: malcomsonbrothers/claude-code-permission-hook (npm 설치) — https://github.com/malcomsonbrothers/claude-code-permission-hook
+  - 복합 명령 분해: liberzon/claude-hooks (PreToolUse에서 하위 명령별로 허용·거부 패턴 검사) — https://github.com/liberzon/claude-hooks
+  - 위험 명령 차단 모음: karanb192/claude-code-hooks — https://github.com/karanb192/claude-code-hooks
+  - 모바일 원격 승인: yuuichieguchi/claude-remote-approver (ntfy 푸시, 허용·항상 허용·거부 버튼) — https://github.com/yuuichieguchi/claude-remote-approver
+  - 원격 승인 플러그인: Manta-Network/cc-remote-approval (로컬 창과 원격 중 먼저 답한 쪽 적용) — https://github.com/Manta-Network/cc-remote-approval
+  - Slack 승인 + 정책 + 서명 감사 로그: jeremylongshore/claude-code-slack-channel — https://github.com/jeremylongshore/claude-code-slack-channel
+- 참고 이슈: `PermissionRequest` 훅은 비대화형(`-p`) 모드에서 실행되지 않는다는 지적 — https://github.com/anthropics/claude-code/issues/26703
