@@ -13,6 +13,9 @@ AI로 구체화하기 위한 아이디어 모음. 각 아이디어는 `카테고
 - [아이디어 제목](카테고리/아이디어/README.md) — 한 줄 요약
 -->
 
+### [ai-dev-tools](ai-dev-tools/)
+- [로컬 LLM 토큰 절감 도구 (Claude Code·Codex 공용)](ai-dev-tools/local-llm-token-saver/README.md) — 토큰 사용을 항목별로 측정하고, 맥 로컬 LLM에 요약·코드 검색·단순 작업을 맡겨 클라우드 토큰을 줄이는 MCP 도구
+
 ### [compliance](compliance/)
 - [계정·권한 정기 검토 보조](compliance/access-review-assistant/README.md) — 인사 데이터와 시스템 계정을 대조해 이상 계정을 찾고 부서장 확인까지 자동화
 - [ISMS-P 증적 자동 수집·매핑](compliance/isms-p-evidence-collector/README.md) — 통제항목별 증적을 자동 수집·매핑하고 누락·만료 항목 알림
